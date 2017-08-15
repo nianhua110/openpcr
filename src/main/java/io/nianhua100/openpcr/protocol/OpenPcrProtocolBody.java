@@ -4,6 +4,8 @@
  */
 package io.nianhua100.openpcr.protocol;
 
+import java.util.Optional;
+
 public abstract class OpenPcrProtocolBody implements IStream {
 
   protected byte type;
@@ -13,8 +15,21 @@ public abstract class OpenPcrProtocolBody implements IStream {
   }
 
   public byte[] toStream() {
-    return new byte[0];
+    return Optional.ofNullable(toStreamString())
+        .map(String::getBytes)
+        .map(in -> {
+          byte[] bytes = new byte[in.length + 1];
+          bytes[0] = type;
+          System.arraycopy(in, 0, bytes, 1, in.length);
+          return bytes;
+        })
+        .orElse(new byte[]{type});
   }
 
-  abstract  protected String toStreamString();
+
+  public int getLength() {
+    return Optional.of(toStream()).map(in -> in.length).orElse(0);
+  }
+
+  protected abstract String toStreamString();
 }

@@ -6,6 +6,6 @@ package io.nianhua100.openpcr.protocol;
 
 public class OpenPcrProtocolTail implements IStream{
   public byte[] toStream() {
-    return new byte[0];
+    return new byte[]{(byte) 0xFF};
   }
 }
